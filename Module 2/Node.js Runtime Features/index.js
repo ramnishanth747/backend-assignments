@@ -14,6 +14,7 @@
  * Run it with:  npm start
  */
 
+const { error } = require('console');
 const fs = require('fs');
 const path = require('path');
 
@@ -28,6 +29,15 @@ function readWholeFile() {
   // TODO: if there is an error, log it and return.
   // TODO: log the size in bytes. A Buffer has a .length property (bytes).
   //       Example log: "readFile: loaded 524288 bytes into memory".
+  fs.readFile(INPUT,(err , data )=>{
+    if (err){
+       console.log(err);
+       return ; 
+    }
+    else {
+      console.log(data.length);
+    }
+  })
 }
 
 // ── PART 2: stream the file and pipe it to a writable stream ────────────────
@@ -37,6 +47,12 @@ function streamFile() {
   // TODO: pipe the readable into the writable: readable.pipe(writable).
   // TODO: listen for the writable's "finish" event and log a done message,
   //       e.g. "stream: finished copying via 64KB chunks (flat memory)".
+  const read = fs.createReadStream(INPUT);
+  const write = fs.createWriteStream(OUTPUT);
+  read.pipe(write);
+  write.on("finish",()=> {
+    console.log("stream: finished copying via 64KB chunks (flat memory)")
+  })
 }
 
 // ── PART 3: explain the difference ──────────────────────────────────────────
@@ -46,6 +62,10 @@ function streamFile() {
 //       so peak memory stays flat regardless of file size.
 //
 // YOUR EXPLANATION:
+//`readFile` takes the entire file and puts it into memory, so it is more suitable for smaller files.
+//  A stream is more suitable for large files because it processes the file in chunks,
+//  which keeps memory usage low and helps prevent memory problems.
+
 //
 
 // Run both approaches.
